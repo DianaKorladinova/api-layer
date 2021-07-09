@@ -5,3 +5,7 @@
 .dialog {
     color: red;
 }
+
+.wizardForm *{
+    margin-top: 5px;
+}
