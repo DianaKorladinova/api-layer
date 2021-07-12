@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import TextInput from 'mineral-ui/TextInput';
+import * as log from 'loglevel';
 import ButtonGroup from 'mineral-ui/ButtonGroup';
 import {
     Dialog,
@@ -10,9 +11,8 @@ import {
     DialogActions,
     Button,
     Text,
-    Dropdown,
+    Select,
 } from 'mineral-ui';
-import { IconArrowDropDown } from 'mineral-ui-icons';
 import './wizard.css';
 import { data } from '../../constants/wizard-constants';
 
@@ -23,10 +23,11 @@ export default class WizardDialog extends Component {
             selectedIndex: 0,
             inputData: [...data],
         };
-        this.handleChange = this.handleChange.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleCategoryChange = this.handleCategoryChange.bind(this);
     }
 
-    handleChange(event) {
+    handleInputChange(event) {
         const { name } = event.target;
         const inputData = [...this.state.inputData];
         const objectToChange = inputData[this.state.selectedIndex];
@@ -35,6 +36,15 @@ export default class WizardDialog extends Component {
             content: { ...objectToChange.content, [name]: event.target.value },
         };
         this.setState({ inputData });
+    }
+
+    handleCategoryChange(event) {
+        for (let i = 0; i < data.length; i += 1) {
+            if (data[i].text === event.text) {
+                this.setState({ selectedIndex: i });
+                break;
+            }
+        }
     }
 
     closeWizard = () => {
@@ -53,7 +63,7 @@ export default class WizardDialog extends Component {
                 <TextInput
                     size="large"
                     name={item[0]}
-                    onChange={this.handleChange}
+                    onChange={this.handleInputChange}
                     key={key}
                     placeholder={item[0]}
                     value={dataAsObject.content[item[0]]}
@@ -75,9 +85,12 @@ export default class WizardDialog extends Component {
                         <ButtonGroup aria-label="Optional compositions">
                             <Button>Previous</Button>
                             <Button>Next</Button>
-                            <Dropdown data={data}>
-                                <Button iconEnd={<IconArrowDropDown />}>Categories</Button>
-                            </Dropdown>
+                            <Select
+                                className="selector"
+                                data={data}
+                                selectedItem={this.state.inputData[this.state.selectedIndex]}
+                                onChange={this.handleCategoryChange}
+                            />
                         </ButtonGroup>
                         <div className="wizardForm"> {this.loadInputs()}</div>
                     </DialogBody>
@@ -86,7 +99,12 @@ export default class WizardDialog extends Component {
                             <Button size="medium" onClick={this.closeWizard}>
                                 Cancel
                             </Button>
-                            <Button size="medium"> Save file </Button>
+                            <Button
+                                size="medium"
+                                onClick={() => log.error(this.state.inputData[this.state.selectedIndex])}
+                            >
+                                Save file
+                            </Button>
                         </DialogActions>
                     </DialogFooter>
                 </Dialog>
