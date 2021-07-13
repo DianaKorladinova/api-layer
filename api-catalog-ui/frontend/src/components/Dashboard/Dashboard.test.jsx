@@ -3,6 +3,8 @@ import * as React from 'react';
 // tslint:disable-next-line:no-implicit-dependencies
 import { shallow } from 'enzyme';
 import Dashboard from './Dashboard';
+import WizardDialog from '../Wizard/WizardDialog';
+import { data } from '../Wizard/wizard_config';
 
 const ajaxError = {
     message: 'ajax Error 404',
@@ -134,6 +136,24 @@ describe('>>> Dashboard component tests', () => {
         const instance = wrapper.instance();
         instance.toggleWizard();
         expect(wizardToggleDisplay).toHaveBeenCalled();
+    });
+
+    it('should refresh static APIs on button click', () => {
+        const refreshedStaticApi = jest.fn();
+        const wrapper = shallow(
+            <Dashboard
+                tiles={null}
+                fetchTilesStart={jest.fn()}
+                refreshedStaticApi={refreshedStaticApi}
+                fetchTilesStop={jest.fn()}
+                clearService={jest.fn()}
+                clear={jest.fn()}
+                inputData={data}
+            />
+        );
+        const instance = wrapper.instance();
+        instance.refreshStaticApis();
+        expect(refreshedStaticApi).toHaveBeenCalled();
     });
 
     it('should create tile', () => {
