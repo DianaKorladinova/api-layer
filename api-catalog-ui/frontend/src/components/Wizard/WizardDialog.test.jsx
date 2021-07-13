@@ -12,6 +12,7 @@ import * as enzyme from 'enzyme';
 import React from 'react';
 import WizardDialog from './WizardDialog';
 import { data } from './wizard_config';
+import { shallow } from 'enzyme';
 
 describe('>>> WizardDialog tests', () => {
     it('should render the dialog if store value is true', () => {
@@ -73,5 +74,63 @@ describe('>>> WizardDialog tests', () => {
             <WizardDialog wizardToggleDisplay={jest.fn()} inputData={dummyData} wizardIsOpen />
         );
         expect(wrapper.find('TextInput').length).toEqual(0);
+    });
+
+    it('should close dialog on cancel', () => {
+        const wizardToggleDisplay = jest.fn();
+        const wrapper = shallow(
+            <WizardDialog
+                tiles={null}
+                fetchTilesStart={jest.fn()}
+                wizardToggleDisplay={wizardToggleDisplay}
+                fetchTilesStop={jest.fn()}
+                clearService={jest.fn()}
+                clear={jest.fn()}
+                inputData={data}
+            />
+        );
+        const instance = wrapper.instance();
+        instance.closeWizard();
+        expect(wizardToggleDisplay).toHaveBeenCalled();
+    });
+
+    it('should get previous category', () => {
+        const prevIndex = jest.fn();
+        const wrapper = shallow(
+            <WizardDialog
+                tiles={null}
+                fetchTilesStart={jest.fn()}
+                prevIndex={prevIndex}
+                fetchTilesStop={jest.fn()}
+                clearService={jest.fn()}
+                clear={jest.fn()}
+                inputData={data}
+            />
+        );
+        const instance = wrapper.instance();
+        instance.setState({ selectedIndex: 0 });
+        const len = data.length;
+        instance.getPrev();
+        expect(wrapper.state().selectedIndex).toEqual(len - 1);
+    });
+
+    it('should get next category', () => {
+        const nextIndex = jest.fn();
+        const wrapper = shallow(
+            <WizardDialog
+                tiles={null}
+                fetchTilesStart={jest.fn()}
+                nextIndex={nextIndex}
+                fetchTilesStop={jest.fn()}
+                clearService={jest.fn()}
+                clear={jest.fn()}
+                inputData={data}
+            />
+        );
+        const instance = wrapper.instance();
+        const len = data.length;
+        instance.setState({ selectedIndex: len - 1 });
+        instance.getNext();
+        expect(wrapper.state().selectedIndex).toEqual(0);
     });
 });
