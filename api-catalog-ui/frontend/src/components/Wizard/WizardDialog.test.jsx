@@ -18,4 +18,60 @@ describe('>>> WizardDialog tests', () => {
         const wrapper = enzyme.shallow(<WizardDialog wizardToggleDisplay={jest.fn()} inputData={data} wizardIsOpen />);
         expect(wrapper.find('DialogBody').exists()).toEqual(true);
     });
+
+    it('should create 4 inputs based on data', () => {
+        const dummyData = [
+            {
+                text: 'Dummy Data',
+                content: {
+                    test: '',
+                    test2: '',
+                    test3: '',
+                    test4: '',
+                },
+            },
+        ];
+        const wrapper = enzyme.shallow(
+            <WizardDialog wizardToggleDisplay={jest.fn()} inputData={dummyData} wizardIsOpen />
+        );
+        expect(wrapper.find('TextInput').length).toEqual(4);
+    });
+
+    it('should create 0 inputs if content is an empty object', () => {
+        const dummyData = [
+            {
+                text: 'Basic info',
+                content: {},
+            },
+        ];
+        const wrapper = enzyme.shallow(
+            <WizardDialog wizardToggleDisplay={jest.fn()} inputData={dummyData} wizardIsOpen />
+        );
+        expect(wrapper.find('TextInput').length).toEqual(0);
+    });
+
+    it('should create 0 inputs if content does not exist', () => {
+        const dummyData = [
+            {
+                text: 'Basic info',
+            },
+        ];
+        const wrapper = enzyme.shallow(
+            <WizardDialog wizardToggleDisplay={jest.fn()} inputData={dummyData} wizardIsOpen />
+        );
+        expect(wrapper.find('TextInput').length).toEqual(0);
+    });
+
+    it('should create 0 inputs if content is null', () => {
+        const dummyData = [
+            {
+                text: 'Basic info',
+                content: null,
+            },
+        ];
+        const wrapper = enzyme.shallow(
+            <WizardDialog wizardToggleDisplay={jest.fn()} inputData={dummyData} wizardIsOpen />
+        );
+        expect(wrapper.find('TextInput').length).toEqual(0);
+    });
 });
